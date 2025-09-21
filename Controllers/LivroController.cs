@@ -8,7 +8,7 @@ public class LivroController : GestaoDeLivrariaBaseController
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public IActionResult GetAll()
+    public IActionResult BuscarTodosOsLivros()
     {
         return Ok(new
         {
@@ -42,5 +42,24 @@ public class LivroController : GestaoDeLivrariaBaseController
             message = "Livro adicionado com sucesso.",
             dadosDoLivro = novoLivroComId
         });
+    }
+
+
+    [HttpDelete]
+    [Route("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult ExcluirUmLivroPeloId([FromRoute] string id)
+    {
+        LivroDto? livroQueSeraRemovido = Livros.Find(livro => livro.Id == id);
+
+        if (livroQueSeraRemovido == null)
+        {
+            return NotFound("ID não encontrado.");
+        }
+
+        Livros.Remove(livroQueSeraRemovido);
+        
+        return NoContent();
     }
 }
