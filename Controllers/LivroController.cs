@@ -1,6 +1,6 @@
-using GestaoDeLivraria.Communication.Request;
-using GestaoDeLivraria.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using GestaoDeLivraria.Dtos;
+using GestaoDeLivraria.Communication.Request;
 
 namespace GestaoDeLivraria.Controllers;
 
@@ -44,6 +44,37 @@ public class LivroController : GestaoDeLivrariaBaseController
         });
     }
 
+
+    [HttpPut]
+    [Route("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult AtualizarOsDadosDeUmLivro([FromRoute] string id, [FromBody] RequestAtualizarDadosDoLivro atualizarDadosDoLivro)
+    {
+        int indexDoLivroQueSeraAtualizado = Livros.FindIndex(book => book.Id == id);
+        
+        if (indexDoLivroQueSeraAtualizado < 0) return NotFound();
+        
+        LivroDto livroAtualizado = new LivroDto
+        {
+            Id = Livros[indexDoLivroQueSeraAtualizado].Id,
+            Titulo = atualizarDadosDoLivro.Titulo,
+            Autor = atualizarDadosDoLivro.Autor,
+            Genero = atualizarDadosDoLivro.Genero,
+            Preco = atualizarDadosDoLivro.Preco,
+            QuantidadeEmEstoque = atualizarDadosDoLivro.QuantidadeEmEstoque
+        };
+
+        Livros[indexDoLivroQueSeraAtualizado] = livroAtualizado;
+        
+        return Ok(new
+        {
+            statusCode = StatusCodes.Status200OK,
+            message = "Livro atualizado com sucesso.",
+            livro = Livros[indexDoLivroQueSeraAtualizado]
+        });
+    }
+    
 
     [HttpDelete]
     [Route("{id}")]
